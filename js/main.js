@@ -11,10 +11,10 @@ function onInit() {
 function createCinema() {
     const cinema = []
 
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < 6; i++) {
         cinema[i] = []
-        for (var j = 0; j < 15; j++) {
-            const cell = { isSeat: j !== 7 }
+        for (var j = 0; j < 10; j++) {
+            const cell = { isSeat: j !== 2 && j !== 7 && i !== 3 }
             if (cell.isSeat) {
                 cell.price = 5 + i
                 cell.isBooked = false
@@ -28,7 +28,7 @@ function createCinema() {
 
 function renderCinema() {
     var strHTML = ''
-    
+
     for (var i = 0; i < gCinema.length; i++) {
         strHTML += `<tr class="cinema-row" >\n`
         for (var j = 0; j < gCinema[0].length; j++) {
@@ -36,15 +36,14 @@ function renderCinema() {
 
             // For a cell of type SEAT add seat class
             var className = (cell.isSeat) ? 'seat' : ''
-            
+
             // For a cell that is booked add booked class
             if (cell.isBooked) {
                 className += ' booked'
             }
             // Add a seat title
             const title = `Seat: ${i + 1}, ${j + 1}`
-
-            strHTML += `\t<td title="${title}" class="cell ${className}" 
+            strHTML += `\t<td data-i="${i}" data-j="${j}" title="${title}" class="cell ${className}" 
                             onclick="onCellClicked(this, ${i}, ${j})" >
                          </td>\n`
         }
@@ -65,7 +64,7 @@ function onCellClicked(elCell, i, j) {
 
     // Selecting a seat
     elCell.classList.add('selected')
-    
+
     // Only a single seat should be selected
     if (gElSelectedSeat) {
         gElSelectedSeat.classList.remove('selected')
@@ -89,14 +88,42 @@ function showSeatDetails(pos) {
     elPopup.querySelector('h2 span').innerText = `${pos.i + 1}-${pos.j + 1}`
     elPopup.querySelector('h3 span').innerText = `${seat.price}`
     elPopup.querySelector('h4 span').innerText = countAvailableSeatsAround(gCinema, pos.i, pos.j)
-    
+
     elBtn.dataset.i = pos.i
     elBtn.dataset.j = pos.j
     elPopup.hidden = false
 }
 
+// function onHighlightSeats() {
+//     var i = +gElSelectedSeat.dataset.i
+//     var j = +gElSelectedSeat.dataset.j
+//     highlightAvailableSeatsAround(board, i, j)
+// }
+function highlightAvailableSeatsAround() {
+    var rowIdx = +gElSelectedSeat.dataset.i
+    var colIdx = +gElSelectedSeat.dataset.j
+    for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+        if (i < 0 || i >= gCinema.length) continue
+        for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+            if (j < 0 || j >= gCinema[0].length) continue
+            if (i === rowIdx && j === colIdx) continue
+
+            const elSeat = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
+            elSeat.classList.add('highlight')
+            console.log(elSeat)
+            setTimeout(() => {
+                elSeat.classList.remove('highlight')
+            }, 2500);
+        }
+    }
+}
+
+
+
 function hideSeatDetails() {
     document.querySelector('.popup').hidden = true
+    gElSelectedSeat = null
+    renderCinema()
 }
 
 function onBookSeat(elBtn) {

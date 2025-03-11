@@ -17,7 +17,7 @@
         </table>
 
         <div hidden class="popup">
-            <button class="btn-close">x</button>
+            <button class="btn-close" onclick="hideSeatDetails()">x</button>
             <h2>Seat: <span>X-X</span></h2>
             <h3>Price: $<span>X</span></h3>
             <h4>Available seats: <span>0</span></h4>
@@ -26,6 +26,7 @@
                 data-i=""
                 data-j=""
                 onclick="onBookSeat(this)">Book this Seat</button>
+                <button class="btn-highlight" onclick="highlightAvailableSeatsAround()">🔦</button>
         </div>
         
         <script src="js/main.js"></script>
